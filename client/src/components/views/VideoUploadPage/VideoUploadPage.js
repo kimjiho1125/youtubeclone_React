@@ -40,6 +40,23 @@ function VideoUploadPage() {
         setCategory(e.currentTarget.value)
     }
 
+    const onDrop = (files) => {
+        let formData = new formData;
+        const config = {
+          header: {'content-type' : 'multipart/form-data'}
+        }
+        formData.append("file",files[0])
+
+        Axios.post('/api/video/uploadfiles',formData,config)
+        .then(response => {
+          if(response.data.success) {
+
+          } else {
+            alert('비디오 업로드를 실패했습니다')
+          }
+        })
+    }
+
     return (
       <div style={{ maxWidth: "700px", margin: "2rem auto" }}>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
@@ -49,7 +66,11 @@ function VideoUploadPage() {
         <Form onSubmit>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {/* Drop zoen */}
-            <Dropzone onDrop multiple maxSize>
+            <Dropzone 
+             onDrop = {onDrop}
+             multiple = {false}
+             maxSize = {1000000000}
+             > 
               {({ getRootProps, getInputProps }) => (
                 <div
                   style={{
