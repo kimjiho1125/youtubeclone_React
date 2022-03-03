@@ -109,7 +109,7 @@ function VideoUploadPage() {
             {/* Thumbnail */}
             {ThumbnailPath && 
               <div>
-                <img scr={`http://localhost:5000/${ThumbnailPath}`} alt="thumbnail" />
+                <img src={`http://localhost:5000/${ThumbnailPath}`} alt="thumbnail" />
               </div>
             }
           </div>
