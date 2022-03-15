@@ -4,6 +4,7 @@ import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
+import { response } from 'express';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -93,10 +94,17 @@ function VideoUploadPage() {
         filePath: FilePath,
         category: Category,
         duration: Duration,
-        thumbnail: user.userData._thumbnail,
+        thumbnail: ThumbnailPath,
       };
 
       Axios.post('/api/video/uploadVideo', variables)
+        .then(response => {
+          if(response.data.success) {
+            console.log(response.data)
+          } else {
+            alert('비디오 업로드에 실패했습니다.')
+          }
+        })
     }
 
     return (
