@@ -4,7 +4,6 @@ import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useSelector } from 'react-redux';
-import { response } from 'express';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -21,7 +20,7 @@ const CategoryOptions = [
     {value: 3, label: "Pets & Animals"},
 ]
 
-function VideoUploadPage(props) {
+function VideoUploadPage(props) { 
   const user = useSelector((state) => state.user);
   const [VideoTitle, setVideoTitle] = useState("");
   const [Description, setDescription] = useState("");
@@ -48,43 +47,42 @@ function VideoUploadPage(props) {
   };
 
   const onDrop = (files) => {
-    let formData = new FormData();
-    const config = {
-      header: { "content-type": "multipart/form-data" },
-    };
-    formData.append("file", files[0]);
+        let formData = new FormData;
+        const config = {
+          header: {'content-type' : 'multipart/form-data'}
+        }
+        formData.append("file",files[0])
 
-    axios.post("/api/video/uploadfiles", formData, config).then((response) => {
-      if (response.data.success) {
-        message.success("업로드에 성공했습니다.");
+        axios.post('/api/video/uploadfiles',formData,config).then(response => {
+          if(response.data.success) {
+              console.log(response.data)
 
-        setTimeout(() => {
-           props.history.push("/");
-        }, 3000);
+              let variable = {
+                url: response.data.url,
+                fileName: response.data.fileName,
+              };
 
-        let variable = {
-          url: response.data.url,
-          fileName: response.data.fileName,
-        };
+              setFilePath(response.data.url)
 
-        setFilePath(response.data.url);
+              axios.post('/api/video/thumbnail', variable).then(response => {
+                if(response.data.success) {
 
-        axios.post("/api/video/thumbnail", variable).then((response) => {
-          if (response.data.success) {
-            setDuration(response.data.fileDuration);
-            setThumbnailPath(response.data.url);
+                  setDuration(response.data.fileDuration);
+                  setThumbnailPath(response.data.url);
+
+                } else {
+                  alert('썸네일 생성에 실패 했습니다.')
+                }
+              })
+
           } else {
-            alert("썸네일 생성에 실패 했습니다.");
+            alert('비디오 업로드를 실패했습니다')
           }
-        });
-      } else {
-        alert("비디오 업로드를 실패했습니다");
-      }
-    });
-  };
+        })
+    }
 
   const onSubmit = (e) => {
-    e.preventDefualt();
+    e.preventDefault();
 
     const variables = {
       writer: user.userData._id,
@@ -95,16 +93,26 @@ function VideoUploadPage(props) {
       category: Category,
       duration: Duration,
       thumbnail: ThumbnailPath,
-    };
+    }
 
-    Axios.post("/api/video/uploadVideo", variables).then((response) => {
-      if (response.data.success) {
-        console.log(response.data);
+    Axios.post('/api/video/uploadVideo', variables).then(response => {
+      if(response.data.success) {
+
+        console.log(response.data)
+        // message.success('성공적으로 업로드를 했습니다.')
+
+        // setTimeout(() => {
+        //   props.history.push("/");
+        // },3000);
+
+     
       } else {
-        alert("비디오 업로드에 실패했습니다.");
+        console.log(response.data);
+        alert('비디오 업로드에 실패했습니다')
       }
-    });
-  };
+    })
+
+  }
 
   return (
     <div style={{ maxWidth: "700px", margin: "2rem auto" }}>
@@ -176,7 +184,7 @@ function VideoUploadPage(props) {
 
         <br />
         <br />
-        <Button type="primary" size="large" onclick={onsubmit}>
+        <Button type="primary" size="large" onClick={onSubmit}>
           Submit
         </Button>
       </Form>
